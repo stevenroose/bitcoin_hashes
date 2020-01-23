@@ -22,7 +22,7 @@ use Hash as HashTrait;
 use Error;
 
 /// Trait representing a tag that can be used as a context for SHA256t hashes.
-pub trait Tag: Copy + Ord + Default + ::core::hash::Hash {
+pub trait Tag: Copy + Ord + Default + HashTrait {
     /// Returns a hash engine that is pre-tagged and is ready
     /// to be used for the data.
     fn engine() -> sha256::HashEngine;
@@ -42,8 +42,8 @@ impl<T: Tag> HashTrait for Hash<T> {
     type Engine = sha256::HashEngine;
     type Inner = [u8; 32];
 
-    fn engine() -> sha256::HashEngine {
-        T::engine()
+    fn engine() -> Self::Engine {
+        <T as Tag>::engine()
     }
 
     fn from_engine(e: sha256::HashEngine) -> Hash<T> {
